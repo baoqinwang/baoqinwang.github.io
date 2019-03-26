@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+<html lang class="loading">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>事务相关 - 飞风</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate">
+    <meta name="keywords" content="WangBaoQin,"> 
+    <meta name="description" content="事务的四大特征，以及隔离级别四大特性1.原子性：事务包含的所有操作要么全部成功，要么全部失败回滚;成功必须要完全应用到数据库，失败则不能对数据库产生影响；
+  栗子：a有1000  b有1000
+原,"> 
+    <meta name="author" content="baoqinwang"> 
+    <link rel="alternative" href="atom.xml" title="飞风" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+</head>
+</html>
+<body class="loading">
+    <span id="config-title" style="display:none">飞风</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="https://github.com"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">事务相关</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class="main">
+        <h1 class="title">事务相关</h1>
+        <div class="stuff">
+            <span>三月 26, 2019</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/事务/">事务</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h1 id="事务的四大特征，以及隔离级别"><a href="#事务的四大特征，以及隔离级别" class="headerlink" title="事务的四大特征，以及隔离级别"></a>事务的四大特征，以及隔离级别</h1><h2 id="四大特性"><a href="#四大特性" class="headerlink" title="四大特性"></a>四大特性</h2><p>1.原子性：事务包含的所有操作要么全部成功，要么全部失败回滚;成功必须要完全应用到数据库，失败则不能对数据库产生影响；</p>
+<p>  栗子：a有1000  b有1000</p>
+<p>原子性： 当a给b转200</p>
+<p>要是a转了200 这时候a800</p>
+<p>然后b就是1200</p>
+<p>不能存在a800b100要嘛两个操作都是成功的，要嘛都两个操作都失效这就是事务的原子性</p>
+<p>2.一致性：事务执行前和执行后必须处于一致性状态</p>
+<p>   也就是说无论：a和b的转账操作怎么转，但是最终的结果就是两个人的金额总数是2000</p>
+<p>3.隔离性：当多个用户并发访问数据库时，数据库为每一个用户开启的事务，不被其他事务的操作所干扰，多个并发事务之间要相互隔离；隔离性代表事务的修改结果在什么时候能被其他事务看到</p>
+<p>4.持久性：一个事务一旦被提交了，那么对数据库中的数据的改变就是永久性的，即便在数据库系统遇到故障的情况下也不会丢失事物的操作。</p>
+<h2 id="隔离级别"><a href="#隔离级别" class="headerlink" title="隔离级别"></a>隔离级别</h2><h3 id="不考虑隔离性产生的问题："><a href="#不考虑隔离性产生的问题：" class="headerlink" title="不考虑隔离性产生的问题："></a>不考虑隔离性产生的问题：</h3><p>1.脏读</p>
+<p>是指<strong>一个事务处理过程里读取了另一个未提交的事务中的数据</strong>，然后使用了这个数据；<br>例：用户A向用户B转账100元，A通知B查看账户，B发现前确实已到账，而之后无论第二条SQL是否执行，只要该事务部提交，则所有操作都将回滚，当B再次查看账户时就会发现前其实并没有到账。</p>
+<p>2.不可重复读</p>
+<p>不可重复读是指在一个事务内，多次读取同一个数据，在这个事务还没有结束 ，另一个事务也访问该同一数据，但是由于第二个事务的修改，那么第一个事务两次读取的数据可能不一样，因此称为不可重复读；即同一个事务中原始数据读取不可重复。 注：不可重复读和脏读的区别，脏读是某一个事务读取另一个事务未提交的脏数据; 不可重复读则是读取前一事务提交</p>
+<p><strong>在一个事务里面读取了两次某个数据，读出来的数据不一致</strong></p>
+<p>3.幻读<br>当事务不是独立执行时发生的一种现象，例如第一个事务对一个表中的数据进行修改，这种数据涉及到表中的全部数据行，同时，第二个事务也对这个表数据进行修改，这个修改是对表中新增/删除一条数据，那么操作第一个事务的用户发现表中的数据还没有修改的数据行，就好像发生了幻觉一样，这就是发生了幻读。<br>注:幻读和不可重复读都读取另一条已经提交的事务，所不同的是不可重复读查询的都是同一数据项，而幻读针对的是一批数据整体。不可重复读是修改数据，幻读是新增数据</p>
+<p><strong>在一个事务里面的操作中发现了未被操作的数据在一个事务里面的操作中发现了未被操作的数据</strong></p>
+<h3 id="隔离级别："><a href="#隔离级别：" class="headerlink" title="隔离级别："></a>隔离级别：</h3><p>1.读未提交，即能够读取到没有被提交的数据，所以很明显这个级别的隔离机制无法解决脏读、不可重复读、幻读中的任何一种，因此很少使用</p>
+<p>2.读已提交，即能够读到那些已经提交的数据，自然能够防止脏读，但是无法限制不可重复读和幻读</p>
+<p>3.重复读取，即在数据读出来之后加锁，类似”select * from XXX for update”，明确数据读取出来就是为了更新用的，所以要加一把锁，防止别人修改它。REPEATABLE_READ的意思也类似，读取了一条数据，这个事务不结束，别的事务就不可以改这条记录，这样就解决了脏读、不可重复读的问题，但是幻读的问题还是无法解决</p>
+<p>4.串行化，最高的事务隔离级别，不管多少事务，挨个运行完一个事务的所有子事务之后才可以执行另外一个事务里面的所有子事务，这样就解决了脏读、不可重复读和幻读的问题了</p>
+<p><img src="/2019/03/26/事务相关/1.png" alt="隔离级别产生的问题"></p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="http://music.163.com/song/media/outer/url?id=431259256.mp3">
+            </audio>
+            
+        </div>
+        
+    <div id="gitalk-container" class="comment link" data-ae="false" data-ci="5fc45ff3f0cdb5327d08" data-cs="2863ddaa3d6f2069eace35f24a3989e837908362" data-r="baoqinwang.github.io" data-o="baoqinwang" data-a="baoqinwang" data-d="false">查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>
